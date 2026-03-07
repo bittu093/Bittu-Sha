@@ -3,76 +3,80 @@
 
   <!-- Home -->
   <url>
-    <loc>https://www.bittusha.in/</loc>
+    <loc>https://bittusha.in/</loc>
     <lastmod>2026-01-01</lastmod>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/about-us.html</loc>
+    <loc>https://bittusha.in/about-us.html</loc>
     <lastmod>2026-01-19</lastmod>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/contact-us.html</loc>
+    <loc>https://bittusha.in/contact-us.html</loc>
     <lastmod>2026-01-19</lastmod>
     <priority>1.00</priority>
   </url>
 
   <!-- Core Pages -->
   <url>
-    <loc>https://www.bittusha.in/blog.html</loc>
+    <loc>https://bittusha.in/blog.html</loc>
     <priority>0.90</priority>
   </url>
 
   <!-- Legal Pages -->
   <url>
-    <loc>https://www.bittusha.in/privacy-policy.html</loc>
+    <loc>https://bittusha.in/privacy-policy.html</loc>
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/terms-and-conditions.html</loc>
+    <loc>https://bittusha.in/terms-and-conditions.html</loc>
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/disclaimer.html</loc>
+    <loc>https://bittusha.in/disclaimer.html</loc>
     <priority>0.60</priority>
   </url>
 
   <!-- Blog Articles -->
   <url>
-    <loc>https://www.bittusha.in/earn-money-from-instagram-2025.html</loc>
+    <loc>https://bittusha.in/earn-money-from-instagram-2025.html</loc>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/make-money-online-no-investment-india.html</loc>
+    <loc>https://bittusha.in/make-money-online-no-investment-india.html</loc>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/facebook-monetization-complete-guide.html</loc>
+    <loc>https://bittusha.in/facebook-monetization-complete-guide.html</loc>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/how-to-get-mudra-loan-online.html</loc>
+    <loc>https://bittusha.in/how-to-get-mudra-loan-online.html</loc>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/mutual-funds-large-cap-mid-cap-small-cap.html</loc>
+    <loc>https://bittusha.in/mutual-funds-large-cap-mid-cap-small-cap.html</loc>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/how-to-get-google-adsense-approval-2026.html</loc>
+    <loc>https://bittusha.in/how-to-get-google-adsense-approval-2026.html</loc>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/learn-khasi-language.html</loc>
+    <loc>https://bittusha.in/learn-khasi-language.html</loc>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/sbi-e-mudra-loan-50000-apply-online.html</loc>
+    <loc>https://bittusha.in/sbi-e-mudra-loan-50000-apply-online.html</loc>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/sbi-e-mudra-loan-beginner-guide.html</loc>
+    <loc>https://bittusha.in/sbi-e-mudra-loan-beginner-guide.html</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://bittusha.in/website-developer-shillong </loc>
     <priority>0.85</priority>
   </url>
 
