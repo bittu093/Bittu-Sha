@@ -1410,24 +1410,29 @@
     </div>
 
     <div class="contact-form">
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" placeholder="Enter your name" />
-      </div>
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" placeholder="your.email@example.com" />
-      </div>
-      <div class="form-group">
-        <label>Subject</label>
-        <input type="text" placeholder="What's this about?" />
-      </div>
-      <div class="form-group">
-        <label>Message</label>
-        <textarea placeholder="Tell me more about your project or question..."></textarea>
-      </div>
-      <button class="btn btn-full">Send Message</button>
-    </div>
+         <form id="contactForm">
+  <div class="form-group">
+    <label>Your Name</label>
+    <input type="text" id="name" placeholder="Enter your name" required />
+  </div>
+
+  <div class="form-group">
+    <label>Email Address</label>
+    <input type="email" id="email" placeholder="your.email@example.com" required />
+  </div>
+
+  <div class="form-group">
+    <label>Subject</label>
+    <input type="text" id="subject" placeholder="What's this about?" required />
+  </div>
+
+  <div class="form-group">
+    <label>Message</label>
+    <textarea id="message" placeholder="Tell me more about your project or question..." required></textarea>
+  </div>
+
+  <button type="submit" class="submit-btn">Send Message</button>
+</form>
   </div>
 </div>
 </section>
