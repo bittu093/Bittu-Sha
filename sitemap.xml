@@ -84,7 +84,11 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.bittusha.in/best-hotels-in-shillong.html</loc>
+    <loc>https://bittusha.in/best-hotels-in-shillong.html</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://bittusha.in/luxury-hotels-in-shillong</loc>
     <priority>0.85</priority>
   </url>
 
