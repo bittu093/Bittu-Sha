@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
 <style>
-  
 :root {
   --bg: #060608;
   --bg-2: #0d0d12;
@@ -74,18 +74,36 @@ nav {
 }
 
 .nav-logo {
-  display: flex; align-items: center;
-  text-decoration: none;
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 4px;
+  text-decoration: none; flex-shrink: 0;
 }
 
 .nav-logo-img {
-  height: 40px;
-  width: auto;
+  height: 52px;
+  width: 52px;
   object-fit: contain;
-  /* logo has dark bg — trim it so it looks native on the navbar */
-  mix-blend-mode: normal;
-  filter: brightness(1.05);
+  object-position: center;
+  mix-blend-mode: screen;   /* makes the black bg invisible on dark nav */
+  flex-shrink: 0;
+}
+
+.nav-logo-text {
+  font-family: var(--font-head);
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #fff;
+  line-height: 1;
+}
+
+.nav-logo-sub {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 2px;
 }
 
 .nav-links {
@@ -1094,7 +1112,7 @@ h1, h2, h3 { font-family: var(--font-head); }
    FOOTER
 ───────────────────────────────────────────── */
 footer {
-  background: var(--bg-3);
+  background: transparent;
   border-top: 1px solid var(--border);
   padding: 70px 6vw 36px;
 }
@@ -1106,8 +1124,10 @@ footer {
 
 .footer-brand { max-width: 280px; }
 .footer-brand-logo {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 16px; text-decoration: none;
+  display: block;
+  margin-bottom: 10px;
+  margin-left: -8px; /* optical align — logo has inner padding */
+  text-decoration: none;
 }
 
 .footer-brand-logo-icon {
@@ -1249,7 +1269,7 @@ footer {
     content: '';
     display: block;
     height: 70px; flex-shrink: 0;
-    background: url('bittusha_logo.png') no-repeat left center / auto 38px;
+    background: url('bittu-header-logo.png') no-repeat left center / 54px 54px;
     padding-left: 24px;
     border-bottom: 1px solid rgba(255,255,255,0.07);
   }
@@ -1398,7 +1418,8 @@ footer {
 <!-- ── NAV ── -->
 <nav id="navbar">
   <a href="#home" class="nav-logo">
-    <img src="img/bittu-header-logo.png" alt="BittuSha Digital" class="nav-logo-img" />
+    <img src="bittu-header-logo.png" alt="BittuSha Digital" class="nav-logo-img" />
+    <span class="nav-logo-text">BittuSha<span class="nav-logo-sub"> Digital</span></span>
   </a>
   <ul class="nav-links" id="navLinks">
     <li><a href="#services">Services</a></li>
@@ -1417,7 +1438,7 @@ footer {
 
 <!-- ── HERO ── -->
 <section id="home">
-  <div id="hero">
+  <div id="hero" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80&fit=crop'); background-size: cover; background-position: center; background-attachment: fixed;">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
@@ -1856,12 +1877,13 @@ footer {
         <!-- logo watermark overlay -->
         <div style="
           position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
-          background:rgba(4,4,8,0.75); backdrop-filter:blur(16px);
+          background:rgba(4,4,8,0.72); backdrop-filter:blur(16px);
           border:1px solid rgba(255,255,255,0.1);
           border-radius:12px; padding:10px 18px;
-          display:flex; align-items:center; gap:0; white-space:nowrap;
+          display:flex; align-items:center; white-space:nowrap;
         ">
-          <img src="bittusha_logo.png" alt="BittuSha Digital" style="height:26px;width:auto;object-fit:contain;" />
+          <img src="bittusha_main_logo.png" alt="BittuSha Digital"
+            style="height:28px;width:auto;object-fit:contain;mix-blend-mode:screen;" />
         </div>
       </div>
       <div class="about-badge-float">
@@ -2116,11 +2138,11 @@ footer {
             <span>+91 76196 60526 — Reply within 2 hours</span>
           </div>
         </a>
-        <a href="mailto:shabittu093@gmail.com" class="contact-method cm-email">
+        <a href="/cdn-cgi/l/email-protection#e2918a83808b969697d2dbd1a2858f838b8ecc818d8f" class="contact-method cm-email">
           <div class="contact-method-icon">✉️</div>
           <div class="contact-method-text">
             <strong>Email</strong>
-            <span>shabittu093@gmail.com</span>
+            <span><span class="__cf_email__" data-cfemail="a9dac1c8cbc0dddddc99909ae9cec4c8c0c587cac6c4">[email&#160;protected]</span></span>
           </div>
         </a>
         <div class="contact-method cm-loc" style="cursor:default;">
@@ -2181,7 +2203,8 @@ footer {
   <div class="footer-grid">
     <div class="footer-brand">
       <a href="#home" class="footer-brand-logo">
-        <img src="img/bittusha_main_logo.png" alt="BittuSha Digital" style="height:36px;width:auto;object-fit:contain;" />
+        <img src="bittusha_main_logo.png" alt="BittuSha Digital"
+          style="width:260px; max-width:100%; height:auto; object-fit:contain; mix-blend-mode:screen; display:block;" />
       </a>
       <p>
         Premium digital solutions for businesses ready to grow online.
@@ -2253,7 +2276,7 @@ footer {
 </div>
 
 <!-- ── SCRIPTS ── -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── hamburger ──
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
@@ -2348,16 +2371,4 @@ function handleContact(e) {
 // ── smooth scroll for hash links ──
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', function(e) {
-    const id = this.getAttribute('href');
-    if (id.length > 1) {
-      const el = document.querySelector(id);
-      if (el) {
-        e.preventDefault();
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  });
-});
-</script>
-</body>
-</html>
+    const id = this.getAtt
