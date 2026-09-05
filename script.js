@@ -1,6 +1,13 @@
 /* =========================================================
    NORTHEAST UNITY NIGHT 2026
-   COMPLETE script.js
+   COMPLETE REGISTRATION SCRIPT
+   ========================================================= */
+
+"use strict";
+
+
+/* =========================================================
+   CONFIG
    ========================================================= */
 
 const CONFIG = {
@@ -12,11 +19,16 @@ const CONFIG = {
 
 
 /* =========================================================
-   GENERAL HELPERS
+   BASIC HELPERS
    ========================================================= */
 
+function $(id) {
+  return document.getElementById(id);
+}
+
+
 function escapeHtml(value) {
-  return String(value ?? "").replace(
+  return String(value || "").replace(
     /[&<>"']/g,
     function (char) {
       return {
@@ -30,16 +42,21 @@ function escapeHtml(value) {
   );
 }
 
-function toTitleCase(str) {
-  return String(str || "")
+
+function toTitleCase(value) {
+  return String(value || "")
     .trim()
     .split(/\s+/)
+    .filter(Boolean)
     .map(function (word) {
-      return word.charAt(0).toUpperCase() +
-        word.slice(1).toLowerCase();
+      return (
+        word.charAt(0).toUpperCase() +
+        word.slice(1).toLowerCase()
+      );
     })
     .join(" ");
 }
+
 
 function waLink(message) {
   return (
@@ -55,120 +72,190 @@ function waLink(message) {
    NAVIGATION
    ========================================================= */
 
-const navToggle = document.getElementById("navToggle");
-const mainNav = document.getElementById("mainNav");
+(function setupNavigation() {
 
-if (navToggle && mainNav) {
+  const navToggle = $("navToggle");
+  const mainNav = $("mainNav");
+
+  if (!navToggle || !mainNav) {
+    return;
+  }
+
   navToggle.addEventListener("click", function () {
-    const isOpen =
+
+    const open =
       mainNav.classList.toggle("open");
 
     navToggle.setAttribute(
       "aria-expanded",
-      String(isOpen)
+      String(open)
     );
+
   });
 
-  mainNav.querySelectorAll("a").forEach(function (link) {
-    link.addEventListener("click", function () {
-      mainNav.classList.remove("open");
-    });
-  });
-}
+
+  mainNav.querySelectorAll("a").forEach(
+    function (link) {
+
+      link.addEventListener(
+        "click",
+        function () {
+          mainNav.classList.remove("open");
+        }
+      );
+
+    }
+  );
+
+})();
 
 
 /* =========================================================
-   WHATSAPP BUTTONS
+   WHATSAPP LINKS
    ========================================================= */
 
-const enquiryMessage =
-  "Hi! I'd like to know more about Northeast Unity Night 2026.";
+(function setupWhatsAppLinks() {
 
-[
-  "heroWhatsapp",
-  "floatWhatsapp",
-  "footerWhatsapp",
-  "footerWhatsapp2"
-].forEach(function (id) {
-  const element =
-    document.getElementById(id);
+  const message =
+    "Hi! I'd like to know more about Northeast Unity Night 2026.";
 
-  if (element) {
-    element.href =
-      waLink(enquiryMessage);
-  }
-});
+  [
+    "heroWhatsapp",
+    "floatWhatsapp",
+    "footerWhatsapp",
+    "footerWhatsapp2"
+  ].forEach(function (id) {
+
+    const element = $(id);
+
+    if (element) {
+      element.href = waLink(message);
+    }
+
+  });
+
+})();
 
 
 /* =========================================================
    FAQ
    ========================================================= */
 
-document.querySelectorAll(".faq-q").forEach(function (button) {
+(function setupFAQ() {
 
-  button.addEventListener("click", function () {
+  document
+    .querySelectorAll(".faq-q")
+    .forEach(function (button) {
 
-    const item =
-      button.parentElement;
+      button.addEventListener(
+        "click",
+        function () {
 
-    const answer =
-      item
-        ? item.querySelector(".faq-a")
-        : null;
+          const parent =
+            button.parentElement;
 
-    const currentlyOpen =
-      button.getAttribute("aria-expanded") === "true";
+          if (!parent) {
+            return;
+          }
 
-    document.querySelectorAll(".faq-q").forEach(function (otherButton) {
+          const answer =
+            parent.querySelector(".faq-a");
 
-      otherButton.setAttribute(
-        "aria-expanded",
-        "false"
+          if (!answer) {
+            return;
+          }
+
+          const isOpen =
+            button.getAttribute(
+              "aria-expanded"
+            ) === "true";
+
+
+          document
+            .querySelectorAll(".faq-q")
+            .forEach(function (otherButton) {
+
+              otherButton.setAttribute(
+                "aria-expanded",
+                "false"
+              );
+
+              const otherParent =
+                otherButton.parentElement;
+
+              if (!otherParent) {
+                return;
+              }
+
+              const otherAnswer =
+                otherParent.querySelector(
+                  ".faq-a"
+                );
+
+              if (otherAnswer) {
+                otherAnswer.style.maxHeight =
+                  null;
+              }
+
+            });
+
+
+          if (!isOpen) {
+
+            button.setAttribute(
+              "aria-expanded",
+              "true"
+            );
+
+            answer.style.maxHeight =
+              answer.scrollHeight + 40 + "px";
+
+          }
+
+        }
       );
 
-      const otherAnswer =
-        otherButton.parentElement
-          ? otherButton.parentElement.querySelector(".faq-a")
-          : null;
-
-      if (otherAnswer) {
-        otherAnswer.style.maxHeight = null;
-      }
     });
 
-    if (!currentlyOpen && answer) {
-
-      button.setAttribute(
-        "aria-expanded",
-        "true"
-      );
-
-      answer.style.maxHeight =
-        answer.scrollHeight + 40 + "px";
-    }
-  });
-
-});
+})();
 
 
 /* =========================================================
    REGISTRATION FORM
    ========================================================= */
 
-const form =
-  document.getElementById("regForm");
+const registrationForm =
+  $("regForm");
 
-if (form) {
+
+if (!registrationForm) {
+
+  console.error(
+    "NUN ERROR: #regForm was not found."
+  );
+
+} else {
+
+
+  /* =======================================================
+     STATE
+     ======================================================= */
 
   const steps =
     Array.from(
-      form.querySelectorAll(".reg-step")
+      registrationForm.querySelectorAll(
+        ".reg-step"
+      )
     );
+
 
   const stepIndicators =
     Array.from(
-      document.querySelectorAll("#regSteps li")
+      document.querySelectorAll(
+        "#regSteps li"
+      )
     );
+
 
   let currentStep = 0;
 
@@ -176,12 +263,18 @@ if (form) {
 
   let uploadedPhotoDataUrl = "";
 
+  let currentRegistrationData = null;
+
 
   /* =======================================================
-     STEP CONTROL
+     SHOW STEP
      ======================================================= */
 
   function showStep(index) {
+
+    if (!steps.length) {
+      return;
+    }
 
     if (
       index < 0 ||
@@ -190,88 +283,108 @@ if (form) {
       return;
     }
 
-    steps.forEach(function (step, i) {
 
-      step.classList.toggle(
-        "active",
-        i === index
-      );
+    steps.forEach(
+      function (step, i) {
 
-    });
+        step.classList.toggle(
+          "active",
+          i === index
+        );
 
-    stepIndicators.forEach(function (indicator, i) {
+      }
+    );
 
-      indicator.classList.toggle(
-        "active",
-        i === index
-      );
 
-      indicator.classList.toggle(
-        "done",
-        i < index
-      );
+    stepIndicators.forEach(
+      function (indicator, i) {
 
-    });
+        indicator.classList.toggle(
+          "active",
+          i === index
+        );
+
+        indicator.classList.toggle(
+          "done",
+          i < index
+        );
+
+      }
+    );
+
 
     currentStep = index;
 
-    const progress =
-      document.getElementById(
-        "stepsLineFill"
-      );
+
+    const line =
+      $("stepsLineFill");
+
 
     if (
-      progress &&
+      line &&
       steps.length > 1
     ) {
 
-      progress.style.width =
-        (index / (steps.length - 1)) *
+      line.style.width =
+        (
+          index /
+          (steps.length - 1)
+        ) *
         100 +
         "%";
+
     }
 
-    const registrationShell =
+
+    const shell =
       document.querySelector(
         ".reg-shell"
       );
 
-    if (registrationShell) {
 
-      registrationShell.scrollIntoView({
+    if (shell) {
+
+      shell.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });
 
     }
+
   }
 
 
   /* =======================================================
-     PACKAGE
+     SELECTED PACKAGE
      ======================================================= */
 
   function getSelectedPackage() {
 
     const selected =
-      form.querySelector(
+      registrationForm.querySelector(
         'input[name="package"]:checked'
       );
 
-    return {
-      name: selected
-        ? selected.value
-        : "",
 
-      price: selected
-        ? selected.dataset.price
-        : "0"
+    return {
+
+      name:
+        selected
+          ? selected.value
+          : "",
+
+      price:
+        selected
+          ? selected.dataset.price
+          : "0"
+
     };
+
   }
 
 
   /* =======================================================
-     PAYMENT PANEL
+     PAYMENT QR
      ======================================================= */
 
   function updatePaymentPanel() {
@@ -279,40 +392,48 @@ if (form) {
     const packageData =
       getSelectedPackage();
 
+
     const price =
       packageData.price;
 
-    const payAmount =
-      document.getElementById(
-        "payAmount"
-      );
 
-    if (payAmount) {
+    const amountElement =
+      $("payAmount");
 
-      payAmount.textContent =
+
+    if (amountElement) {
+
+      amountElement.textContent =
         "₹" + price;
 
     }
 
+
     const qrBox =
-      document.getElementById(
-        "qrcode"
-      );
+      $("qrcode");
+
 
     if (!qrBox) {
+
+      console.warn(
+        "NUN: #qrcode not found."
+      );
+
       return;
+
     }
 
 
     /*
-      REAL STATIC QR FALLBACK
+      REAL QR FALLBACK
 
-      This image must exist here:
+      Keep this file:
 
       img/payment-qr.png
     */
 
-    const fallbackQR = `
+    const fallback =
+      `
       <img
         src="img/payment-qr.png"
         alt="UPI payment QR code"
@@ -323,17 +444,13 @@ if (form) {
           object-fit:contain;
           margin:auto;
         "
-      />
-    `;
+      >
+      `;
 
 
     /*
-      IMPORTANT FIX
-
-      If qrcode.min.js does not load,
-      the page MUST NOT stop.
-
-      The Continue button will still work.
+      If qrcode.min.js is not loaded,
+      NEVER stop the registration.
     */
 
     if (
@@ -341,21 +458,18 @@ if (form) {
     ) {
 
       qrBox.innerHTML =
-        fallbackQR +
+        fallback +
         `
         <p class="dynamic-payment-note">
           <strong>Scan to pay ₹${price}</strong><br>
-          Please enter ₹${price} manually in your UPI app.
+          Enter ₹${price} manually in your UPI app.
         </p>
         `;
 
       return;
+
     }
 
-
-    /*
-      DYNAMIC UPI PAYMENT LINK
-    */
 
     const upiURL =
       "upi://pay" +
@@ -377,26 +491,28 @@ if (form) {
     qrBox.innerHTML = "";
 
 
-    const qrTarget =
-      document.createElement("div");
+    const target =
+      document.createElement(
+        "div"
+      );
 
-    qrTarget.id =
-      "dynamicPaymentQr";
 
-    qrTarget.setAttribute(
+    target.setAttribute(
       "aria-label",
-      "UPI payment QR for ₹" + price
+      "UPI payment QR for ₹" +
+      price
     );
 
+
     qrBox.appendChild(
-      qrTarget
+      target
     );
 
 
     try {
 
       new QRCode(
-        qrTarget,
+        target,
         {
           text: upiURL,
           width: 200,
@@ -409,59 +525,76 @@ if (form) {
     } catch (error) {
 
       console.error(
-        "Payment QR generation failed:",
+        "NUN: Payment QR failed:",
         error
       );
 
+
       qrBox.innerHTML =
-        fallbackQR;
+        fallback;
+
     }
 
 
     const note =
-      document.createElement("p");
+      document.createElement(
+        "p"
+      );
+
 
     note.className =
       "dynamic-payment-note";
 
+
     note.innerHTML =
       `
       <strong>Scan to pay ₹${price}</strong><br>
-      Amount will be pre-filled in your UPI app.
+      Amount will be pre-filled where supported.
       `;
+
 
     qrBox.appendChild(
       note
     );
+
   }
 
 
   /* =======================================================
-     STEP VALIDATION
+     FORM VALIDATION
      ======================================================= */
 
   function validateStep(index) {
 
-    if (
-      !steps[index]
-    ) {
+    const step =
+      steps[index];
+
+
+    if (!step) {
       return false;
     }
 
+
     const requiredFields =
-      steps[index].querySelectorAll(
+      step.querySelectorAll(
         "[required]"
       );
+
 
     for (
       const field of requiredFields
     ) {
 
       if (
-        !field.reportValidity()
+        !field.checkValidity()
       ) {
+
+        field.reportValidity();
+
         return false;
+
       }
+
     }
 
 
@@ -471,43 +604,53 @@ if (form) {
 
     if (index === 1) {
 
-      const transactionInput =
-        form.querySelector(
+      const txnInput =
+        registrationForm.querySelector(
           'input[name="txnId"]'
         );
 
-      const transactionId =
-        transactionInput
-          ? transactionInput.value.trim()
+
+      const txnId =
+        txnInput
+          ? txnInput.value.trim()
           : "";
+
+
+      if (!txnId) {
+
+        alert(
+          "Please enter your transaction / UPI reference ID."
+        );
+
+
+        if (txnInput) {
+          txnInput.focus();
+        }
+
+
+        return false;
+
+      }
 
 
       if (
         !/^[A-Za-z0-9]{9,22}$/.test(
-          transactionId
+          txnId
         )
       ) {
 
-        if (transactionInput) {
+        alert(
+          "Please enter a valid transaction / UPI reference ID (9–22 letters/numbers, without spaces)."
+        );
 
-          transactionInput.setCustomValidity(
-            "Enter a valid transaction / UPI reference ID (9–22 letters or numbers, no spaces)."
-          );
 
-          transactionInput.reportValidity();
-
-          transactionInput.addEventListener(
-            "input",
-            function () {
-              transactionInput.setCustomValidity("");
-            },
-            {
-              once: true
-            }
-          );
+        if (txnInput) {
+          txnInput.focus();
         }
 
+
         return false;
+
       }
 
 
@@ -519,40 +662,16 @@ if (form) {
           "Please upload your payment screenshot before continuing."
         );
 
+
         return false;
+
       }
 
-
-      /*
-        Duplicate transaction warning
-      */
-
-      const usedTransactions =
-        JSON.parse(
-          localStorage.getItem(
-            "nun_used_txn_ids"
-          ) || "[]"
-        );
-
-      if (
-        usedTransactions.includes(
-          transactionId.toLowerCase()
-        )
-      ) {
-
-        const continueAnyway =
-          confirm(
-            "This transaction ID was already used on this device. If this is a genuine second registration, press OK to continue. The organising team will verify the payment."
-          );
-
-        if (!continueAnyway) {
-          return false;
-        }
-      }
     }
 
 
     return true;
+
   }
 
 
@@ -560,28 +679,29 @@ if (form) {
      NEXT BUTTONS
      ======================================================= */
 
-  form
-    .querySelectorAll("[data-next]")
+  registrationForm
+    .querySelectorAll(
+      "[data-next]"
+    )
     .forEach(function (button) {
 
       button.addEventListener(
         "click",
-        function () {
+        function (event) {
+
+          event.preventDefault();
+
 
           if (
             !validateStep(
               currentStep
             )
           ) {
+
             return;
+
           }
 
-
-          /*
-            Step 1 -> Payment
-
-            QR generation is now SAFE.
-          */
 
           if (
             currentStep === 0
@@ -591,10 +711,6 @@ if (form) {
 
           }
 
-
-          /*
-            Payment -> Review
-          */
 
           if (
             currentStep === 1
@@ -626,13 +742,17 @@ if (form) {
      BACK BUTTONS
      ======================================================= */
 
-  form
-    .querySelectorAll("[data-back]")
+  registrationForm
+    .querySelectorAll(
+      "[data-back]"
+    )
     .forEach(function (button) {
 
       button.addEventListener(
         "click",
-        function () {
+        function (event) {
+
+          event.preventDefault();
 
           showStep(
             currentStep - 1
@@ -649,19 +769,15 @@ if (form) {
      ======================================================= */
 
   const photoInput =
-    document.getElementById(
-      "photoInput"
-    );
+    $("photoInput");
+
 
   const photoPreview =
-    document.getElementById(
-      "photoPreview"
-    );
+    $("photoPreview");
+
 
   const photoIcon =
-    document.getElementById(
-      "photoIcon"
-    );
+    $("photoIcon");
 
 
   if (photoInput) {
@@ -673,9 +789,11 @@ if (form) {
         const file =
           event.target.files[0];
 
+
         if (!file) {
           return;
         }
+
 
         if (
           !file.type.startsWith(
@@ -687,9 +805,11 @@ if (form) {
             "Please select an image file."
           );
 
-          photoInput.value = "";
+          photoInput.value =
+            "";
 
           return;
+
         }
 
 
@@ -736,28 +856,23 @@ if (form) {
 
 
   /* =======================================================
-     PAYMENT SCREENSHOT
+     SCREENSHOT UPLOAD
      ======================================================= */
 
   const screenshotInput =
-    document.getElementById(
-      "screenshotInput"
-    );
+    $("screenshotInput");
+
 
   const dropzone =
-    document.getElementById(
-      "dropzone"
-    );
+    $("dropzone");
+
 
   const dropzoneEmpty =
-    document.getElementById(
-      "dropzoneEmpty"
-    );
+    $("dropzoneEmpty");
+
 
   const uploadPreview =
-    document.getElementById(
-      "uploadPreview"
-    );
+    $("uploadPreview");
 
 
   function handleScreenshotFile(
@@ -776,11 +891,16 @@ if (form) {
     ) {
 
       alert(
-        "Please upload a PNG or JPG image."
+        "Please upload a PNG, JPG or image file."
       );
 
       return;
+
     }
+
+
+    uploadedScreenshotFile =
+      file;
 
 
     const reader =
@@ -790,19 +910,12 @@ if (form) {
     reader.onload =
       function (event) {
 
-        uploadedScreenshotFile =
-          file;
-
-
         const previewImg =
-          document.getElementById(
-            "previewImg"
-          );
+          $("previewImg");
+
 
         const fileName =
-          document.getElementById(
-            "uploadFileName"
-          );
+          $("uploadFileName");
 
 
         if (previewImg) {
@@ -836,12 +949,33 @@ if (form) {
 
         }
 
+
+        const warning =
+          $("screenshotAgeWarning");
+
+
+        if (warning) {
+
+          const ageMinutes =
+            (
+              Date.now() -
+              file.lastModified
+            ) /
+            60000;
+
+
+          warning.hidden =
+            ageMinutes <= 120;
+
+        }
+
       };
 
 
     reader.readAsDataURL(
       file
     );
+
   }
 
 
@@ -870,47 +1004,49 @@ if (form) {
     [
       "dragenter",
       "dragover"
-    ].forEach(function (eventName) {
+    ].forEach(
+      function (eventName) {
 
-      dropzone.addEventListener(
-        eventName,
-        function (event) {
+        dropzone.addEventListener(
+          eventName,
+          function (event) {
 
-          event.preventDefault();
+            event.preventDefault();
+            event.stopPropagation();
 
-          event.stopPropagation();
+            dropzone.classList.add(
+              "dragover"
+            );
 
-          dropzone.classList.add(
-            "dragover"
-          );
+          }
+        );
 
-        }
-      );
-
-    });
+      }
+    );
 
 
     [
       "dragleave",
       "drop"
-    ].forEach(function (eventName) {
+    ].forEach(
+      function (eventName) {
 
-      dropzone.addEventListener(
-        eventName,
-        function (event) {
+        dropzone.addEventListener(
+          eventName,
+          function (event) {
 
-          event.preventDefault();
+            event.preventDefault();
+            event.stopPropagation();
 
-          event.stopPropagation();
+            dropzone.classList.remove(
+              "dragover"
+            );
 
-          dropzone.classList.remove(
-            "dragover"
-          );
+          }
+        );
 
-        }
-      );
-
-    });
+      }
+    );
 
 
     dropzone.addEventListener(
@@ -919,6 +1055,7 @@ if (form) {
 
         const file =
           event.dataTransfer.files[0];
+
 
         if (file) {
 
@@ -939,9 +1076,7 @@ if (form) {
      ======================================================= */
 
   const removeScreenshot =
-    document.getElementById(
-      "removeScreenshot"
-    );
+    $("removeScreenshot");
 
 
   if (removeScreenshot) {
@@ -951,7 +1086,6 @@ if (form) {
       function (event) {
 
         event.preventDefault();
-
         event.stopPropagation();
 
 
@@ -982,6 +1116,18 @@ if (form) {
 
         }
 
+
+        const warning =
+          $("screenshotAgeWarning");
+
+
+        if (warning) {
+
+          warning.hidden =
+            true;
+
+        }
+
       }
     );
 
@@ -994,62 +1140,40 @@ if (form) {
 
   function getFormData() {
 
-    const formData =
-      new FormData(form);
+    const fd =
+      new FormData(
+        registrationForm
+      );
+
 
     const packageData =
       getSelectedPackage();
-
-
-    const generatedId =
-      "NUN-" +
-      Math.random()
-        .toString(36)
-        .substring(2, 7)
-        .toUpperCase() +
-      "-" +
-      new Date()
-        .getFullYear();
 
 
     return {
 
       fullName:
         toTitleCase(
-          formData.get(
-            "fullName"
-          ) || ""
+          fd.get("fullName") || ""
         ),
 
       age:
-        formData.get(
-          "age"
-        ) || "",
+        fd.get("age") || "",
 
       gender:
-        formData.get(
-          "gender"
-        ) || "",
+        fd.get("gender") || "",
 
       mobile:
-        formData.get(
-          "mobile"
-        ) || "",
+        fd.get("mobile") || "",
 
       email:
-        formData.get(
-          "email"
-        ) || "",
+        fd.get("email") || "",
 
       state:
-        formData.get(
-          "state"
-        ) || "",
+        fd.get("state") || "",
 
       city:
-        formData.get(
-          "city"
-        ) || "",
+        fd.get("city") || "",
 
       package:
         packageData.name,
@@ -1058,13 +1182,21 @@ if (form) {
         packageData.price,
 
       txnId:
-        formData.get(
-          "txnId"
-        ) || "",
+        String(
+          fd.get("txnId") || ""
+        ).trim(),
 
       id:
-        generatedId
+        "NUN-" +
+        Math.random()
+          .toString(36)
+          .substring(2, 8)
+          .toUpperCase() +
+        "-" +
+        new Date().getFullYear()
+
     };
+
   }
 
 
@@ -1078,18 +1210,16 @@ if (form) {
       getFormData();
 
 
-    const reviewPanel =
-      document.getElementById(
-        "reviewPanel"
-      );
+    const panel =
+      $("reviewPanel");
 
 
-    if (!reviewPanel) {
+    if (!panel) {
       return;
     }
 
 
-    reviewPanel.innerHTML =
+    panel.innerHTML =
       `
       <div>
         <b>Name</b>
@@ -1140,14 +1270,17 @@ if (form) {
         <span>${escapeHtml(data.txnId)}</span>
       </div>
       `;
+
   }
 
 
   /* =======================================================
-     LOAD IMAGE
+     IMAGE LOADER
      ======================================================= */
 
-  function loadImage(src) {
+  function loadImage(
+    source
+  ) {
 
     return new Promise(
       function (resolve, reject) {
@@ -1166,22 +1299,23 @@ if (form) {
           function () {
             reject(
               new Error(
-                "Image could not be loaded."
+                "Image loading failed."
               )
             );
           };
 
 
         image.src =
-          src;
+          source;
 
       }
     );
+
   }
 
 
   /* =======================================================
-     ROUNDED RECT
+     ROUNDED RECTANGLE
      ======================================================= */
 
   function roundedRect(
@@ -1233,27 +1367,28 @@ if (form) {
     );
 
     ctx.closePath();
+
   }
 
 
   /* =======================================================
-     DRAW MONOGRAM
+     MONOGRAM
      ======================================================= */
 
   function drawMonogram(
     ctx,
     data,
-    centerX,
-    centerY,
+    x,
+    y,
     radius
   ) {
 
     const gradient =
       ctx.createLinearGradient(
-        centerX - radius,
-        centerY - radius,
-        centerX + radius,
-        centerY + radius
+        x - radius,
+        y - radius,
+        x + radius,
+        y + radius
       );
 
 
@@ -1274,8 +1409,8 @@ if (form) {
 
 
     ctx.fillRect(
-      centerX - radius,
-      centerY - radius,
+      x - radius,
+      y - radius,
       radius * 2,
       radius * 2
     );
@@ -1298,7 +1433,7 @@ if (form) {
 
 
     ctx.font =
-      "700 64px 'Fraunces', serif";
+      "700 64px Arial";
 
 
     ctx.textAlign =
@@ -1311,32 +1446,19 @@ if (form) {
 
     ctx.fillText(
       initials || "G",
-      centerX,
-      centerY
+      x,
+      y
     );
 
 
     ctx.textBaseline =
       "alphabetic";
+
   }
 
 
   /* =======================================================
-     CREATE EVENT ID QR
-     =======================================================
-
-     VERY IMPORTANT:
-
-     This creates a temporary element only while
-     generating the QR.
-
-     finally{} ALWAYS removes it.
-
-     So you will NOT get lots of:
-
-     <div style="position: fixed; left: -9999px">
-
-     elements left behind.
+     EVENT QR
      ======================================================= */
 
   async function makeEventIdQrDataUrl(
@@ -1348,46 +1470,47 @@ if (form) {
     ) {
 
       return null;
+
     }
 
 
-    const temporary =
+    const temp =
       document.createElement(
         "div"
       );
 
 
-    temporary.style.position =
+    temp.style.position =
       "fixed";
 
-    temporary.style.left =
+    temp.style.left =
       "-10000px";
 
-    temporary.style.top =
+    temp.style.top =
       "-10000px";
 
-    temporary.style.width =
+    temp.style.width =
       "150px";
 
-    temporary.style.height =
+    temp.style.height =
       "150px";
 
-    temporary.style.visibility =
+    temp.style.visibility =
       "hidden";
 
-    temporary.style.pointerEvents =
+    temp.style.pointerEvents =
       "none";
 
 
     document.body.appendChild(
-      temporary
+      temp
     );
 
 
     try {
 
       new QRCode(
-        temporary,
+        temp,
         {
           text: id,
           width: 150,
@@ -1411,7 +1534,7 @@ if (form) {
 
 
       const canvas =
-        temporary.querySelector(
+        temp.querySelector(
           "canvas"
         );
 
@@ -1426,7 +1549,7 @@ if (form) {
 
 
       const image =
-        temporary.querySelector(
+        temp.querySelector(
           "img"
         );
 
@@ -1449,7 +1572,9 @@ if (form) {
 
         }
 
+
         return image.src;
+
       }
 
 
@@ -1458,52 +1583,57 @@ if (form) {
     } catch (error) {
 
       console.error(
-        "Event QR generation failed:",
+        "NUN: Event QR failed:",
         error
       );
+
 
       return null;
 
     } finally {
 
       /*
-        THIS IS THE IMPORTANT FIX.
-        The temporary QR div is ALWAYS removed.
+        CRITICAL:
+        The temporary QR element is
+        ALWAYS removed.
       */
 
       if (
-        temporary.parentNode
+        temp.parentNode
       ) {
 
-        temporary.parentNode.removeChild(
-          temporary
+        temp.parentNode.removeChild(
+          temp
         );
 
       }
 
     }
+
   }
 
 
   /* =======================================================
-     QR PLACEHOLDER
+     ID QR PLACEHOLDER
      ======================================================= */
 
   function drawIdQrPlaceholder(
     ctx,
-    width,
-    pillY
+    W,
+    y
   ) {
 
     const size =
       150;
 
+
     const x =
-      width / 2 -
+      W / 2 -
       size / 2;
 
-    const y =
-      pillY + 156;
+
+    const top =
+      y + 156;
 
 
     ctx.fillStyle =
@@ -1513,7 +1643,7 @@ if (form) {
     roundedRect(
       ctx,
       x - 10,
-      y - 10,
+      top - 10,
       size + 20,
       size + 20,
       10
@@ -1537,31 +1667,30 @@ if (form) {
 
     ctx.fillText(
       "EVENT ID",
-      width / 2,
-      y + 70
+      W / 2,
+      top + 70
     );
 
 
     ctx.fillText(
       "QR",
-      width / 2,
-      y + 92
+      W / 2,
+      top + 92
     );
+
   }
 
 
   /* =======================================================
-     DRAW ID CARD
+     BASIC ID CARD FALLBACK
      ======================================================= */
 
-  async function drawIdCard(
+  function drawBasicIdCard(
     data
   ) {
 
     const canvas =
-      document.getElementById(
-        "idCanvas"
-      );
+      $("idCanvas");
 
 
     if (!canvas) {
@@ -1580,29 +1709,186 @@ if (form) {
     }
 
 
-    const width =
+    const W =
       canvas.width;
 
-    const height =
+
+    const H =
       canvas.height;
 
 
     ctx.clearRect(
       0,
       0,
-      width,
-      height
+      W,
+      H
     );
 
 
-    /* ---------------- BACKGROUND ---------------- */
+    ctx.fillStyle =
+      "#201b17";
+
+
+    ctx.fillRect(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+    ctx.textAlign =
+      "center";
+
+
+    ctx.fillStyle =
+      "#e8c877";
+
+
+    ctx.font =
+      "800 28px Arial";
+
+
+    ctx.fillText(
+      "NORTHEAST UNITY NIGHT",
+      W / 2,
+      100
+    );
+
+
+    ctx.fillStyle =
+      "#ffffff";
+
+
+    ctx.font =
+      "700 38px Arial";
+
+
+    ctx.fillText(
+      data.fullName ||
+        "Guest",
+      W / 2,
+      220
+    );
+
+
+    ctx.fillStyle =
+      "#cfc4ac";
+
+
+    ctx.font =
+      "600 22px Arial";
+
+
+    ctx.fillText(
+      data.state +
+      " · " +
+      data.city,
+      W / 2,
+      270
+    );
+
+
+    ctx.fillStyle =
+      "#e8c877";
+
+
+    ctx.fillText(
+      data.id,
+      W / 2,
+      350
+    );
+
+
+    ctx.fillStyle =
+      "#ffffff";
+
+
+    ctx.font =
+      "600 18px Arial";
+
+
+    ctx.fillText(
+      "Package: " +
+      data.package,
+      W / 2,
+      410
+    );
+
+
+    ctx.fillText(
+      "Amount: ₹" +
+      data.amount,
+      W / 2,
+      450
+    );
+
+
+    ctx.fillStyle =
+      "#e8b45a";
+
+
+    ctx.fillText(
+      "PENDING VERIFICATION",
+      W / 2,
+      H - 100
+    );
+
+  }
+
+
+  /* =======================================================
+     ID CARD
+     ======================================================= */
+
+  async function drawIdCard(
+    data
+  ) {
+
+    const canvas =
+      $("idCanvas");
+
+
+    if (!canvas) {
+      return;
+    }
+
+
+    const ctx =
+      canvas.getContext(
+        "2d"
+      );
+
+
+    if (!ctx) {
+      return;
+    }
+
+
+    const W =
+      canvas.width;
+
+
+    const H =
+      canvas.height;
+
+
+    ctx.clearRect(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+    /* Background */
 
     const gradient =
       ctx.createLinearGradient(
         0,
         0,
-        width,
-        height
+        W,
+        H
       );
 
 
@@ -1625,12 +1911,12 @@ if (form) {
     ctx.fillRect(
       0,
       0,
-      width,
-      height
+      W,
+      H
     );
 
 
-    /* ---------------- BORDER ---------------- */
+    /* Border */
 
     ctx.strokeStyle =
       "rgba(200,155,60,0.5)";
@@ -1644,8 +1930,8 @@ if (form) {
       ctx,
       8,
       8,
-      width - 16,
-      height - 16,
+      W - 16,
+      H - 16,
       22
     );
 
@@ -1653,9 +1939,9 @@ if (form) {
     ctx.stroke();
 
 
-    /* ---------------- TOP BAND ---------------- */
+    /* Top decorative strip */
 
-    const bandColors = [
+    const colors = [
       "#c89b3c",
       "#7a2131",
       "#3f5443",
@@ -1665,6 +1951,7 @@ if (form) {
 
     const stripWidth =
       24;
+
 
     const bandHeight =
       34;
@@ -1679,7 +1966,7 @@ if (form) {
     ctx.rect(
       8,
       8,
-      width - 16,
+      W - 16,
       bandHeight
     );
 
@@ -1688,14 +1975,16 @@ if (form) {
 
 
     for (
-      let x = -bandHeight, i = 0;
-      x < width + bandHeight;
-      x += stripWidth, i++
+      let x = -bandHeight,
+        i = 0;
+      x < W + bandHeight;
+      x += stripWidth,
+        i++
     ) {
 
       ctx.fillStyle =
-        bandColors[
-          i % bandColors.length
+        colors[
+          i % colors.length
         ];
 
 
@@ -1730,13 +2019,14 @@ if (form) {
 
 
       ctx.fill();
+
     }
 
 
     ctx.restore();
 
 
-    /* ---------------- TITLE ---------------- */
+    /* Header */
 
     ctx.textAlign =
       "center";
@@ -1752,7 +2042,7 @@ if (form) {
 
     ctx.fillText(
       "NORTHEAST UNITY NIGHT",
-      width / 2,
+      W / 2,
       92
     );
 
@@ -1767,18 +2057,20 @@ if (form) {
 
     ctx.fillText(
       "OFFICIAL EVENT PASS · 2026",
-      width / 2,
+      W / 2,
       118
     );
 
 
-    /* ---------------- PHOTO ---------------- */
+    /* Photo */
 
-    const centerX =
-      width / 2;
+    const cx =
+      W / 2;
 
-    const centerY =
+
+    const cy =
       250;
+
 
     const radius =
       100;
@@ -1791,8 +2083,8 @@ if (form) {
 
 
     ctx.arc(
-      centerX,
-      centerY,
+      cx,
+      cy,
       radius,
       0,
       Math.PI * 2
@@ -1814,43 +2106,42 @@ if (form) {
           );
 
 
-        const square =
+        const side =
           Math.min(
             photo.width,
             photo.height
           );
 
 
-        const sourceX =
-          (photo.width - square) /
+        const sx =
+          (photo.width - side) /
           2;
 
 
-        const sourceY =
-          (photo.height - square) /
+        const sy =
+          (photo.height - side) /
           2;
 
 
         ctx.drawImage(
           photo,
-          sourceX,
-          sourceY,
-          square,
-          square,
-          centerX - radius,
-          centerY - radius,
+          sx,
+          sy,
+          side,
+          side,
+          cx - radius,
+          cy - radius,
           radius * 2,
           radius * 2
         );
-
 
       } catch (error) {
 
         drawMonogram(
           ctx,
           data,
-          centerX,
-          centerY,
+          cx,
+          cy,
           radius
         );
 
@@ -1861,8 +2152,8 @@ if (form) {
       drawMonogram(
         ctx,
         data,
-        centerX,
-        centerY,
+        cx,
+        cy,
         radius
       );
 
@@ -1871,6 +2162,8 @@ if (form) {
 
     ctx.restore();
 
+
+    /* Photo border */
 
     ctx.strokeStyle =
       "#c89b3c";
@@ -1884,8 +2177,8 @@ if (form) {
 
 
     ctx.arc(
-      centerX,
-      centerY,
+      cx,
+      cy,
       radius,
       0,
       Math.PI * 2
@@ -1895,7 +2188,7 @@ if (form) {
     ctx.stroke();
 
 
-    /* ---------------- NAME ---------------- */
+    /* Name */
 
     ctx.fillStyle =
       "#f4ecdb";
@@ -1908,13 +2201,12 @@ if (form) {
     ctx.fillText(
       data.fullName ||
         "Guest",
-
-      width / 2,
-      centerY + radius + 56
+      W / 2,
+      cy + radius + 56
     );
 
 
-    /* ---------------- LOCATION ---------------- */
+    /* Location */
 
     ctx.fillStyle =
       "#cfc4ac";
@@ -1928,29 +2220,31 @@ if (form) {
       data.state +
       " · " +
       data.city,
-
-      width / 2,
-      centerY + radius + 84
+      W / 2,
+      cy + radius + 84
     );
 
 
-    /* ---------------- PACKAGE ---------------- */
+    /* Package pill */
 
     const pillWidth =
       220;
 
+
     const pillHeight =
       34;
 
+
     const pillY =
-      centerY +
+      cy +
       radius +
       106;
 
 
     roundedRect(
       ctx,
-      width / 2 - pillWidth / 2,
+      W / 2 -
+        pillWidth / 2,
       pillY,
       pillWidth,
       pillHeight,
@@ -1975,7 +2269,8 @@ if (form) {
 
     roundedRect(
       ctx,
-      width / 2 - pillWidth / 2,
+      W / 2 -
+        pillWidth / 2,
       pillY,
       pillWidth,
       pillHeight,
@@ -1998,13 +2293,12 @@ if (form) {
       String(
         data.package || ""
       ).toUpperCase(),
-
-      width / 2,
+      W / 2,
       pillY + 22
     );
 
 
-    /* ---------------- ID LABEL ---------------- */
+    /* ID separator */
 
     ctx.strokeStyle =
       "rgba(244,236,219,0.15)";
@@ -2024,13 +2318,15 @@ if (form) {
 
 
     ctx.lineTo(
-      width - 60,
+      W - 60,
       pillY + 66
     );
 
 
     ctx.stroke();
 
+
+    /* ID label */
 
     ctx.fillStyle =
       "#cfc4ac";
@@ -2042,11 +2338,12 @@ if (form) {
 
     ctx.fillText(
       "REGISTRATION ID · UNIQUE & PERMANENT",
-
-      width / 2,
+      W / 2,
       pillY + 100
     );
 
+
+    /* ID number */
 
     ctx.fillStyle =
       "#f4ecdb";
@@ -2058,18 +2355,35 @@ if (form) {
 
     ctx.fillText(
       data.id,
-
-      width / 2,
+      W / 2,
       pillY + 132
     );
 
 
-    /* ---------------- ID QR ---------------- */
+    /* Event QR */
 
-    const qrData =
-      await makeEventIdQrDataUrl(
-        data.id
+    let qrData =
+      null;
+
+
+    try {
+
+      qrData =
+        await makeEventIdQrDataUrl(
+          data.id
+        );
+
+    } catch (error) {
+
+      console.error(
+        "NUN: QR creation failed:",
+        error
       );
+
+      qrData =
+        null;
+
+    }
 
 
     if (qrData) {
@@ -2087,7 +2401,7 @@ if (form) {
 
 
         const qrX =
-          width / 2 -
+          W / 2 -
           qrSize / 2;
 
 
@@ -2120,12 +2434,11 @@ if (form) {
           qrSize
         );
 
-
       } catch (error) {
 
         drawIdQrPlaceholder(
           ctx,
-          width,
+          W,
           pillY
         );
 
@@ -2135,20 +2448,20 @@ if (form) {
 
       drawIdQrPlaceholder(
         ctx,
-        width,
+        W,
         pillY
       );
 
     }
 
 
-    /* ---------------- STATUS ---------------- */
+    /* Pending badge */
 
     ctx.save();
 
 
     ctx.translate(
-      width - 96,
+      W - 96,
       108
     );
 
@@ -2188,7 +2501,7 @@ if (form) {
     ctx.restore();
 
 
-    /* ---------------- FOOTER ---------------- */
+    /* Footer */
 
     ctx.fillStyle =
       "#8a8070";
@@ -2200,194 +2513,159 @@ if (form) {
 
     ctx.fillText(
       "Carry a valid photo ID at entry. This pass is confirmed only after",
-      width / 2,
-      height - 56
+      W / 2,
+      H - 56
     );
 
 
     ctx.fillText(
       "payment verification by the organising team.",
-      width / 2,
-      height - 38
+      W / 2,
+      H - 38
     );
 
 
     ctx.textAlign =
       "left";
+
   }
 
 
   /* =======================================================
-     BASIC ID CARD FALLBACK
+     FINAL SUBMIT
+     =======================================================
+
+     IMPORTANT:
+     This handler deliberately does NOT allow:
+     - QR errors
+     - ID card errors
+     - WhatsApp errors
+     - Google Sheet errors
+
+     to stop the registration success screen.
      ======================================================= */
 
-  function drawBasicIdCard(
-    data
-  ) {
-
-    const canvas =
-      document.getElementById(
-        "idCanvas"
-      );
-
-
-    if (!canvas) {
-      return;
-    }
-
-
-    const ctx =
-      canvas.getContext(
-        "2d"
-      );
-
-
-    const width =
-      canvas.width;
-
-    const height =
-      canvas.height;
-
-
-    ctx.clearRect(
-      0,
-      0,
-      width,
-      height
-    );
-
-
-    ctx.fillStyle =
-      "#201b17";
-
-
-    ctx.fillRect(
-      0,
-      0,
-      width,
-      height
-    );
-
-
-    ctx.textAlign =
-      "center";
-
-
-    ctx.fillStyle =
-      "#e8c877";
-
-
-    ctx.font =
-      "800 28px Arial";
-
-
-    ctx.fillText(
-      "NORTHEAST UNITY NIGHT",
-      width / 2,
-      100
-    );
-
-
-    ctx.fillStyle =
-      "#ffffff";
-
-
-    ctx.font =
-      "700 38px Arial";
-
-
-    ctx.fillText(
-      data.fullName ||
-        "Guest",
-      width / 2,
-      220
-    );
-
-
-    ctx.fillStyle =
-      "#cfc4ac";
-
-
-    ctx.font =
-      "600 22px Arial";
-
-
-    ctx.fillText(
-      data.state +
-      " · " +
-      data.city,
-      width / 2,
-      270
-    );
-
-
-    ctx.fillStyle =
-      "#e8c877";
-
-
-    ctx.fillText(
-      data.id,
-      width / 2,
-      350
-    );
-
-
-    ctx.fillStyle =
-      "#ffffff";
-
-
-    ctx.font =
-      "600 18px Arial";
-
-
-    ctx.fillText(
-      "Package: " +
-      data.package,
-      width / 2,
-      410
-    );
-
-
-    ctx.fillText(
-      "Amount: ₹" +
-      data.amount,
-      width / 2,
-      450
-    );
-
-
-    ctx.fillStyle =
-      "#e8b45a";
-
-
-    ctx.fillText(
-      "PENDING VERIFICATION",
-      width / 2,
-      height - 100
-    );
-  }
-
-
-  /* =======================================================
-     FORM SUBMIT
-     ======================================================= */
-
-  form.addEventListener(
+  registrationForm.addEventListener(
     "submit",
     async function (event) {
 
       event.preventDefault();
+      event.stopPropagation();
 
 
-      if (
-        !validateStep(
-          currentStep
+      console.log(
+        "NUN: FORM SUBMIT STARTED"
+      );
+
+
+      /* ---------------------------------------------------
+         CHECK FORM FIELDS
+         --------------------------------------------------- */
+
+      for (
+        const field of
+        registrationForm.querySelectorAll(
+          "[required]"
         )
       ) {
 
-        return;
+        if (
+          !field.checkValidity()
+        ) {
+
+          field.reportValidity();
+
+          console.log(
+            "NUN: Missing required field:",
+            field.name ||
+            field.id
+          );
+
+          return;
+
+        }
+
       }
 
+
+      /* ---------------------------------------------------
+         PACKAGE
+         --------------------------------------------------- */
+
+      const packageData =
+        getSelectedPackage();
+
+
+      if (
+        !packageData.name
+      ) {
+
+        alert(
+          "Please select a package."
+        );
+
+        return;
+
+      }
+
+
+      /* ---------------------------------------------------
+         TRANSACTION ID
+         --------------------------------------------------- */
+
+      const txnInput =
+        registrationForm.querySelector(
+          'input[name="txnId"]'
+        );
+
+
+      const txnId =
+        txnInput
+          ? txnInput.value.trim()
+          : "";
+
+
+      if (!txnId) {
+
+        alert(
+          "Please enter your transaction / UPI reference ID."
+        );
+
+
+        if (txnInput) {
+          txnInput.focus();
+        }
+
+
+        return;
+
+      }
+
+
+      if (
+        !/^[A-Za-z0-9]{9,22}$/.test(
+          txnId
+        )
+      ) {
+
+        alert(
+          "Please enter a valid transaction / UPI reference ID (9–22 letters/numbers, no spaces)."
+        );
+
+
+        if (txnInput) {
+          txnInput.focus();
+        }
+
+
+        return;
+
+      }
+
+
+      /* ---------------------------------------------------
+         SCREENSHOT
+         --------------------------------------------------- */
 
       if (
         !uploadedScreenshotFile
@@ -2397,50 +2675,83 @@ if (form) {
           "Please upload your payment screenshot before submitting."
         );
 
+
         showStep(1);
 
+
         return;
+
       }
 
+
+      /* ---------------------------------------------------
+         COLLECT DATA
+         --------------------------------------------------- */
 
       const data =
         getFormData();
 
 
-      /* ---------------- STORE TRANSACTION ID ---------------- */
-
-      const usedTransactions =
-        JSON.parse(
-          localStorage.getItem(
-            "nun_used_txn_ids"
-          ) || "[]"
-        );
+      currentRegistrationData =
+        data;
 
 
-      if (
-        !usedTransactions.includes(
-          data.txnId.toLowerCase()
-        )
-      ) {
-
-        usedTransactions.push(
-          data.txnId.toLowerCase()
-        );
+      console.log(
+        "NUN: Registration data:",
+        data
+      );
 
 
-        localStorage.setItem(
-          "nun_used_txn_ids",
-          JSON.stringify(
-            usedTransactions
+      /* ---------------------------------------------------
+         SAVE TRANSACTION LOCALLY
+         --------------------------------------------------- */
+
+      try {
+
+        let transactions =
+          JSON.parse(
+            localStorage.getItem(
+              "nun_used_txn_ids"
+            ) || "[]"
+          );
+
+
+        if (
+          !transactions.includes(
+            txnId.toLowerCase()
           )
+        ) {
+
+          transactions.push(
+            txnId.toLowerCase()
+          );
+
+
+          localStorage.setItem(
+            "nun_used_txn_ids",
+            JSON.stringify(
+              transactions
+            )
+          );
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "NUN: Local storage unavailable.",
+          error
         );
+
       }
 
 
-      /* ---------------- WHATSAPP MESSAGE ---------------- */
+      /* ---------------------------------------------------
+         WHATSAPP MESSAGE
+         --------------------------------------------------- */
 
-      const whatsappMessage =
-`New registration — Northeast Unity Night 2026
+      const message =
+`New Registration — Northeast Unity Night 2026
 
 STATUS: PENDING VERIFICATION
 
@@ -2464,65 +2775,101 @@ Amount: ₹${data.amount}
 
 Transaction / UPI Ref ID: ${data.txnId}
 
-Please verify this transaction ID and payment screenshot against the actual payment received before confirming.`;
+Payment screenshot has been uploaded.
+
+Please verify the transaction against the actual payment received before confirming the registration.`;
 
 
       const whatsappURL =
-        waLink(
-          whatsappMessage
-        );
+        waLink(message);
 
 
-      const openWhatsappBtn =
-        document.getElementById(
-          "openWhatsappBtn"
-        );
+      /* ---------------------------------------------------
+         SET WHATSAPP BUTTON
+         --------------------------------------------------- */
+
+      const whatsappButton =
+        $("openWhatsappBtn");
 
 
-      if (openWhatsappBtn) {
+      if (whatsappButton) {
 
-        openWhatsappBtn.href =
+        whatsappButton.href =
           whatsappURL;
+
+
+        whatsappButton.target =
+          "_blank";
+
+
+        whatsappButton.rel =
+          "noopener noreferrer";
 
       }
 
 
-      /* ---------------- GOOGLE SHEET ---------------- */
+      /* ---------------------------------------------------
+         GOOGLE SHEET
+         ---------------------------------------------------
+
+         Optional.
+
+         If endpoint is empty, nothing happens.
+
+         If endpoint fails, registration still succeeds.
+         --------------------------------------------------- */
 
       if (
         CONFIG.GOOGLE_SHEET_ENDPOINT
       ) {
 
-        fetch(
-          CONFIG.GOOGLE_SHEET_ENDPOINT,
-          {
-            method: "POST",
+        try {
 
-            mode: "no-cors",
+          fetch(
+            CONFIG.GOOGLE_SHEET_ENDPOINT,
+            {
+              method: "POST",
 
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
+              mode: "no-cors",
 
-            body:
-              JSON.stringify(
-                data
-              )
-          }
-        ).catch(
-          function (error) {
-            console.error(
-              "Google Sheet submission failed:",
-              error
-            );
-          }
-        );
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify(
+                  data
+                )
+            }
+          ).catch(
+            function (error) {
+
+              console.warn(
+                "NUN: Google Sheet error:",
+                error
+              );
+
+            }
+          );
+
+        } catch (error) {
+
+          console.warn(
+            "NUN: Google Sheet unavailable:",
+            error
+          );
+
+        }
 
       }
 
 
-      /* ---------------- ID CARD ---------------- */
+      /* ---------------------------------------------------
+         ID CARD
+
+         NEVER BLOCK SUBMISSION.
+         --------------------------------------------------- */
 
       try {
 
@@ -2533,30 +2880,39 @@ Please verify this transaction ID and payment screenshot against the actual paym
       } catch (error) {
 
         console.error(
-          "ID card generation failed:",
+          "NUN: ID card error:",
           error
         );
 
 
-        /*
-          VERY IMPORTANT:
+        try {
 
-          Even if QR or canvas fails,
-          registration continues.
-        */
+          drawBasicIdCard(
+            data
+          );
 
-        drawBasicIdCard(
-          data
-        );
+        } catch (fallbackError) {
+
+          console.error(
+            "NUN: Basic ID card error:",
+            fallbackError
+          );
+
+        }
+
       }
 
 
-      /* ---------------- SUCCESS MODAL ---------------- */
+      /* ---------------------------------------------------
+         SUCCESS MODAL
+
+         THIS IS THE IMPORTANT PART.
+
+         It runs regardless of ID QR failure.
+         --------------------------------------------------- */
 
       const successModal =
-        document.getElementById(
-          "successModal"
-        );
+        $("successModal");
 
 
       if (successModal) {
@@ -2564,81 +2920,82 @@ Please verify this transaction ID and payment screenshot against the actual paym
         successModal.hidden =
           false;
 
-      }
-
-
-      /*
-        Try native share if supported.
-      */
-
-      let shared =
-        false;
-
-
-      try {
-
-        if (
-          navigator.canShare &&
-          navigator.canShare({
-            files: [
-              uploadedScreenshotFile
-            ]
-          })
-        ) {
-
-          await navigator.share({
-
-            files: [
-              uploadedScreenshotFile
-            ],
-
-            title:
-              "Northeast Unity Night — Payment Screenshot",
-
-            text:
-              whatsappMessage
-
-          });
-
-
-          shared =
-            true;
-        }
-
-      } catch (error) {
 
         /*
-          User cancelled sharing
-          or browser does not support it.
+          Also make sure the modal is visible
+          if CSS has display rules.
         */
 
-        console.log(
-          "Share cancelled or unavailable."
+        successModal.classList.add(
+          "show"
         );
 
       }
 
 
-      /*
-        If native sharing wasn't used,
-        open WhatsApp.
-      */
+      /* ---------------------------------------------------
+         SHOW REGISTRATION ID
+         --------------------------------------------------- */
 
-      if (!shared) {
+      document
+        .querySelectorAll(
+          "[data-registration-id]"
+        )
+        .forEach(
+          function (element) {
 
-        setTimeout(
-          function () {
+            element.textContent =
+              data.id;
 
-            window.open(
-              whatsappURL,
-              "_blank"
+          }
+        );
+
+
+      /* ---------------------------------------------------
+         OPEN WHATSAPP
+
+         If browser blocks popup, user can
+         click the WhatsApp button in modal.
+         --------------------------------------------------- */
+
+      setTimeout(
+        function () {
+
+          try {
+
+            const newWindow =
+              window.open(
+                whatsappURL,
+                "_blank"
+              );
+
+
+            if (!newWindow) {
+
+              console.log(
+                "NUN: Popup blocked. Use the WhatsApp button in the success modal."
+              );
+
+            }
+
+          } catch (error) {
+
+            console.warn(
+              "NUN: Could not open WhatsApp:",
+              error
             );
 
-          },
-          500
-        );
+          }
 
-      }
+        },
+        700
+      );
+
+
+      console.log(
+        "NUN: FORM SUBMITTED SUCCESSFULLY",
+        data.id
+      );
 
     }
   );
@@ -2648,54 +3005,80 @@ Please verify this transaction ID and payment screenshot against the actual paym
      DOWNLOAD ID CARD
      ======================================================= */
 
-  const downloadIdBtn =
-    document.getElementById(
-      "downloadIdBtn"
-    );
+  const downloadButton =
+    $("downloadIdBtn");
 
 
-  if (downloadIdBtn) {
+  if (downloadButton) {
 
-    downloadIdBtn.addEventListener(
+    downloadButton.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
 
         const canvas =
-          document.getElementById(
-            "idCanvas"
-          );
+          $("idCanvas");
 
 
         if (!canvas) {
+
+          alert(
+            "ID card is not available."
+          );
+
           return;
+
         }
 
 
-        const link =
-          document.createElement(
-            "a"
+        try {
+
+          const link =
+            document.createElement(
+              "a"
+            );
+
+
+          link.download =
+            "northeast-unity-night-" +
+            (
+              currentRegistrationData
+                ? currentRegistrationData.id
+                : "id"
+            ) +
+            ".png";
+
+
+          link.href =
+            canvas.toDataURL(
+              "image/png"
+            );
+
+
+          document.body.appendChild(
+            link
           );
 
 
-        link.download =
-          "northeast-unity-night-id.png";
+          link.click();
 
 
-        link.href =
-          canvas.toDataURL(
-            "image/png"
+          link.remove();
+
+        } catch (error) {
+
+          console.error(
+            "NUN: ID download failed:",
+            error
           );
 
+          alert(
+            "Unable to download the ID card."
+          );
 
-        document.body.appendChild(
-          link
-        );
-
-
-        link.click();
-
-
-        link.remove();
+        }
 
       }
     );
@@ -2708,27 +3091,31 @@ Please verify this transaction ID and payment screenshot against the actual paym
      ======================================================= */
 
   const modalClose =
-    document.getElementById(
-      "modalClose"
-    );
+    $("modalClose");
 
 
   if (modalClose) {
 
     modalClose.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
 
         const modal =
-          document.getElementById(
-            "successModal"
-          );
+          $("successModal");
 
 
         if (modal) {
 
           modal.hidden =
             true;
+
+
+          modal.classList.remove(
+            "show"
+          );
 
         }
 
@@ -2739,52 +3126,67 @@ Please verify this transaction ID and payment screenshot against the actual paym
 
 
   /* =======================================================
+     PACKAGE CHANGE
+     ======================================================= */
+
+  registrationForm
+    .querySelectorAll(
+      'input[name="package"]'
+    )
+    .forEach(
+      function (radio) {
+
+        radio.addEventListener(
+          "change",
+          function () {
+
+            /*
+              Only update the QR if
+              payment section exists.
+            */
+
+            updatePaymentPanel();
+
+          }
+        );
+
+      }
+    );
+
+
+  /* =======================================================
      CHATBOT
      ======================================================= */
 
   const chatToggle =
-    document.getElementById(
-      "chatToggle"
-    );
+    $("chatToggle");
 
 
   const chatPanel =
-    document.getElementById(
-      "chatPanel"
-    );
+    $("chatPanel");
 
 
   const chatClose =
-    document.getElementById(
-      "chatClose"
-    );
+    $("chatClose");
 
 
   const chatBody =
-    document.getElementById(
-      "chatBody"
-    );
+    $("chatBody");
 
 
   const chatForm =
-    document.getElementById(
-      "chatForm"
-    );
+    $("chatForm");
 
 
   const chatInput =
-    document.getElementById(
-      "chatInput"
-    );
+    $("chatInput");
 
 
   const chatQuick =
-    document.getElementById(
-      "chatQuick"
-    );
+    $("chatQuick");
 
 
-  const KNOWLEDGE_BASE = [
+  const KB = [
 
     {
       keywords: [
@@ -2796,82 +3198,7 @@ Please verify this transaction ID and payment screenshot against the actual paym
       ],
 
       answer:
-        "There are two packages: Food + Drinks for ₹1,750 per person, and Food Only for ₹750 per person. Payment is made by UPI during registration."
-    },
-
-
-    {
-      keywords: [
-        "venue",
-        "location",
-        "where",
-        "address"
-      ],
-
-      answer:
-        "The event will be in Bengaluru. Check the event page for the latest venue information."
-    },
-
-
-    {
-      keywords: [
-        "date",
-        "time",
-        "when"
-      ],
-
-      answer:
-        "Please check the event page for the latest confirmed date and timing."
-    },
-
-
-    {
-      keywords: [
-        "drink",
-        "alcohol",
-        "bar"
-      ],
-
-      answer:
-        "The Food + Drinks package includes drinks for guests of legal drinking age as applicable under Karnataka law. The Food Only package is non-alcoholic."
-    },
-
-
-    {
-      keywords: [
-        "id",
-        "proof",
-        "entry",
-        "documents"
-      ],
-
-      answer:
-        "Carry a valid government photo ID and your digital or printed event ID when attending."
-    },
-
-
-    {
-      keywords: [
-        "refund",
-        "cancel",
-        "cancellation"
-      ],
-
-      answer:
-        "Registrations are non-refundable and non-transferable once confirmed."
-    },
-
-
-    {
-      keywords: [
-        "register",
-        "registration",
-        "sign up",
-        "how do i register"
-      ],
-
-      answer:
-        "Scroll to the Register section, enter your details, choose your package, pay through UPI, upload your payment screenshot and transaction ID, then submit the form."
+        "There are two packages: Food + Drinks for ₹1,750 per person, and Food Only for ₹750 per person."
     },
 
 
@@ -2885,32 +3212,19 @@ Please verify this transaction ID and payment screenshot against the actual paym
       ],
 
       answer:
-        "The payment QR is generated based on your selected package. Food Only is ₹750 and Food + Drinks is ₹1,750."
+        "Choose your package first. The QR will show the selected amount: ₹1,750 for Food + Drinks or ₹750 for Food Only."
     },
 
 
     {
       keywords: [
-        "amount",
-        "pre filled",
-        "prefilled"
+        "register",
+        "registration",
+        "sign up"
       ],
 
       answer:
-        "The dynamic QR contains the selected amount: ₹750 for Food Only or ₹1,750 for Food + Drinks. Compatible UPI apps can show the amount pre-filled."
-    },
-
-
-    {
-      keywords: [
-        "states",
-        "northeast",
-        "who can come",
-        "who is invited"
-      ],
-
-      answer:
-        "Northeast Unity Night celebrates all 8 Northeast states — Assam, Meghalaya, Nagaland, Manipur, Mizoram, Tripura, Arunachal Pradesh and Sikkim. Everyone is welcome."
+        "Fill in your details, select your package, make the UPI payment, upload your payment screenshot and transaction ID, then submit the registration."
     },
 
 
@@ -2919,22 +3233,64 @@ Please verify this transaction ID and payment screenshot against the actual paym
         "verify",
         "verification",
         "confirm",
-        "approved",
         "pending"
       ],
 
       answer:
-        "Registrations are manually checked against actual payments received. Submitting the form does not automatically confirm your registration."
+        "Registrations are manually checked against the actual payment received. Your registration remains pending until the payment is verified."
+    },
+
+
+    {
+      keywords: [
+        "id",
+        "entry",
+        "proof",
+        "document"
+      ],
+
+      answer:
+        "Carry a valid government photo ID and your event ID when attending."
+    },
+
+
+    {
+      keywords: [
+        "refund",
+        "cancel"
+      ],
+
+      answer:
+        "Registrations are non-refundable and non-transferable once confirmed."
+    },
+
+
+    {
+      keywords: [
+        "states",
+        "northeast"
+      ],
+
+      answer:
+        "Northeast Unity Night represents Assam, Meghalaya, Nagaland, Manipur, Mizoram, Tripura, Arunachal Pradesh and Sikkim."
+    },
+
+
+    {
+      keywords: [
+        "venue",
+        "location",
+        "where"
+      ],
+
+      answer:
+        "The event is in Bengaluru. Please check the event page for the latest venue information."
     }
 
   ];
 
 
-  /* =======================================================
-     CHATBOT RESPONSE
-     ======================================================= */
-
-  function getBotReply(
+  function botReply(
     text
   ) {
 
@@ -2944,7 +3300,7 @@ Please verify this transaction ID and payment screenshot against the actual paym
 
 
     const result =
-      KNOWLEDGE_BASE.find(
+      KB.find(
         function (item) {
 
           return item.keywords.some(
@@ -2961,20 +3317,12 @@ Please verify this transaction ID and payment screenshot against the actual paym
       );
 
 
-    if (result) {
-      return result.answer;
-    }
+    return result
+      ? result.answer
+      : "I couldn't find that information. Please contact us on WhatsApp for specific questions.";
 
-
-    return (
-      "I couldn't find that information in my notes. Please message us directly on WhatsApp for specific questions."
-    );
   }
 
-
-  /* =======================================================
-     CHAT MESSAGE
-     ======================================================= */
 
   function addChatMessage(
     text,
@@ -2986,34 +3334,31 @@ Please verify this transaction ID and payment screenshot against the actual paym
     }
 
 
-    const message =
+    const element =
       document.createElement(
         "div"
       );
 
 
-    message.className =
+    element.className =
       "chat-msg " +
       sender;
 
 
-    message.textContent =
+    element.textContent =
       text;
 
 
     chatBody.appendChild(
-      message
+      element
     );
 
 
     chatBody.scrollTop =
       chatBody.scrollHeight;
+
   }
 
-
-  /* =======================================================
-     QUICK REPLIES
-     ======================================================= */
 
   function renderQuickReplies() {
 
@@ -3026,20 +3371,13 @@ Please verify this transaction ID and payment screenshot against the actual paym
       "";
 
 
-    const quickQuestions = [
-
+    [
       "Pricing",
-
-      "Venue & date",
-
-      "How verification works",
-
+      "Payment",
+      "How to register",
+      "Verification",
       "Talk to a human"
-
-    ];
-
-
-    quickQuestions.forEach(
+    ].forEach(
       function (label) {
 
         const button =
@@ -3073,6 +3411,7 @@ Please verify this transaction ID and payment screenshot against the actual paym
               );
 
               return;
+
             }
 
 
@@ -3082,27 +3421,12 @@ Please verify this transaction ID and payment screenshot against the actual paym
             );
 
 
-            let question =
-              label;
-
-
-            if (
-              label ===
-              "How verification works"
-            ) {
-
-              question =
-                "verification";
-
-            }
-
-
             setTimeout(
               function () {
 
                 addChatMessage(
-                  getBotReply(
-                    question
+                  botReply(
+                    label
                   ),
                   "bot"
                 );
@@ -3121,15 +3445,12 @@ Please verify this transaction ID and payment screenshot against the actual paym
 
       }
     );
+
   }
 
 
   renderQuickReplies();
 
-
-  /* =======================================================
-     CHAT OPEN
-     ======================================================= */
 
   if (
     chatToggle &&
@@ -3149,10 +3470,6 @@ Please verify this transaction ID and payment screenshot against the actual paym
   }
 
 
-  /* =======================================================
-     CHAT CLOSE
-     ======================================================= */
-
   if (
     chatClose &&
     chatPanel
@@ -3171,10 +3488,6 @@ Please verify this transaction ID and payment screenshot against the actual paym
   }
 
 
-  /* =======================================================
-     CHAT FORM
-     ======================================================= */
-
   if (chatForm) {
 
     chatForm.addEventListener(
@@ -3184,19 +3497,19 @@ Please verify this transaction ID and payment screenshot against the actual paym
         event.preventDefault();
 
 
-        const text =
+        const value =
           chatInput
             ? chatInput.value.trim()
             : "";
 
 
-        if (!text) {
+        if (!value) {
           return;
         }
 
 
         addChatMessage(
-          text,
+          value,
           "user"
         );
 
@@ -3213,9 +3526,7 @@ Please verify this transaction ID and payment screenshot against the actual paym
           function () {
 
             addChatMessage(
-              getBotReply(
-                text
-              ),
+              botReply(value),
               "bot"
             );
 
@@ -3228,47 +3539,16 @@ Please verify this transaction ID and payment screenshot against the actual paym
 
   }
 
+
+  /* =======================================================
+     INITIAL STATE
+     ======================================================= */
+
+  showStep(0);
+
+
+  console.log(
+    "NUN: Northeast Unity Night 2026 script loaded."
+  );
+
 }
-
-
-/* =========================================================
-   INITIAL PAYMENT UPDATE
-   ========================================================= */
-
-document
-  .querySelectorAll(
-    'input[name="package"]'
-  )
-  .forEach(function (radio) {
-
-    radio.addEventListener(
-      "change",
-      function () {
-
-        /*
-          Only update if payment panel
-          already exists on the page.
-        */
-
-        if (
-          typeof updatePaymentPanel ===
-          "function"
-        ) {
-
-          updatePaymentPanel();
-
-        }
-
-      }
-    );
-
-  });
-
-
-/* =========================================================
-   FINAL LOG
-   ========================================================= */
-
-console.log(
-  "Northeast Unity Night 2026 script loaded successfully."
-);
